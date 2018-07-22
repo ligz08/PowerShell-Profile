@@ -6,19 +6,27 @@ A [PowerShell profile](https://docs.microsoft.com/en-us/powershell/module/micros
 This repository includes my PowerShell profile scripts, including customizing the command line prompt, and useful functions like `Test-Administrator`.
 
 ## How To Use
-__Step 1:__ Clone or download this repository to your local machine.
-
-__Step 2:__ Copy `profile.ps1` to an your choice of PowerShell profile location. 
-For exmaple in a PowerShell console:
-
-To overwrite profile for current user, all hosts:
+### Option 1: Direct to your local PowerShell profile
+You can stream my `profile.ps1` directly to your local machine's PowerShell profile file. 
+Run the following script In a PowerShell console:
 ```powershell
-Copy-Item -Path .\profile.ps1 -Destination $PROFILE.CurrentUserAllHosts -Confirm
+Invoke-WebRequest https://raw.githubusercontent.com/ligz08/PowerShell-Profile/master/profile.ps1 `
+| Select-Object -ExpandProperty Content `
+| Out-File $PROFILE.CurrentUserAllHosts
+
+. $PROFILE.CurrentUserAllHosts
+```
+Note that there had never been a profile script before, this may produce an error, because `$PROFILE.CurrentUserAllHosts` resolves to a path that does not exist.
+Solve this by creating that file with `New-Item` command (like below), and then run the above `Invoke-WebRequest` script again.
+```powershell
+New-Item $PROFILE.CurrentUserAllHosts -Force
 ```
 
-To overwrite profile for all users, and all hosts (requires Administrator privilege):
+### Option 2: Clone/download repository to local machine
+Or, fork, clone or download this repository if you want more tweaking and customization.
+When on a local machine, copy the `profile.ps` file to your PowerShell profile. For example:
 ```powershell
-Copy-Item -Path .\profile.ps1 -Destination $PROFILE.AllUsersAllHosts -Confirm
+Copy-Item .\profile.ps1 $PROFILE.CurrentUserAllHosts
 ```
 
 ## More Explanations
@@ -31,7 +39,11 @@ If you run `Get-Host` you can see what host you're running PowerShell from.
 
 To make different hosts behave differently, you may want to specify different profile scripts for them. Run `$PROFILE.CurretUserCurrentHost` to see where PowerShell looks for profile script for your current host.
 
+## TODOs
+- [ ] Git repository status in prompt
+- [ ] Help blocks & documentations for functions
 
 ## References & Links
+- This work is inspired by and borrows a lot of insights from [Mathias Bynens](https://mathiasbynens.be/)' dotfiles for macOS: https://github.com/mathiasbynens/dotfiles
 - About PowerShell Profiles: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles
 - `Test-Administrator` function: https://serverfault.com/a/97599
