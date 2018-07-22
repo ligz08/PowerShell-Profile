@@ -1,7 +1,8 @@
 function Test-Administrator {
     <#
     .Synopsis
-    Return True if you are currently running as an administrator, False otherwise.#>
+    Return True if you are currently running as an administrator, False otherwise.
+    #>
     $user = [Security.Principal.WindowsIdentity]::GetCurrent()
     (New-Object Security.Principal.WindowsPrincipal $user).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
 }
@@ -55,7 +56,6 @@ function Set-PathEnvironmentVariable {
             [System.Environment]::SetEnvironmentVariable('PATH', $paths_str, 'User')
         }
         'Machine' {
-            #Requires -RunAsAdministrator
             [System.Environment]::SetEnvironmentVariable('PATH', $paths_str, 'Machine')
         }
         Default {$env:Path = $paths_str}
@@ -85,7 +85,6 @@ function Add-PathEnvironmentVariable {
             Reload-PathEnvironmentVariable
         }
         'Machine' {
-            #Requires -RunAsAdministrator
             if ($Prepend) {
                 $machine_paths = $Path + $machine_paths
             } else {
