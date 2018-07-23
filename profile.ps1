@@ -13,7 +13,7 @@ function Get-PathEnvironmentVariable {
     )
     <#
     .Synopsis
-    Get a list of environment variables. 
+    Get a list of environment variables.
     Return object has two fields: Path and Type.
     Type is either 'User' or 'Machine', suggesting whether this environment variable is available for the current user only or for all users on this machine.
 
@@ -106,6 +106,7 @@ function Add-PathEnvironmentVariable {
     Write-Host $Path -Separator "`n`t"
 }
 
+# TODO
 # function Remove-PathEnvironmentVariable {}
 # function Replace-PathEnvironmentVariable {}
 
@@ -118,6 +119,6 @@ function prompt {
     Write-Host " at " -NoNewline
     Write-Host $env:COMPUTERNAME -ForegroundColor Magenta -NoNewline
     Write-Host " in " -NoNewline
-    Write-Host $executionContext.SessionState.Path.CurrentLocation -ForegroundColor Cyan
-    return "PS > "
+    Write-Host $ExecutionContext.SessionState.Path.CurrentLocation -ForegroundColor Cyan
+    return "$('>' * ($NestedPromptLevel + 1)) "
 }
