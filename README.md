@@ -3,20 +3,24 @@
 ## What Is This
 A [PowerShell profile](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles) is a script that runs every time you start a PowerShell session, such as a PowerShell console, or an integrated scripting environment (ISE). It is PowerShell's equivalent to `.bash_profile` and `.bashrc` files of the Bash shell. It's a place where you can customize your shell environment and pre-load frequently used functions/commands/variables.
 
-This repository includes my PowerShell profile scripts, including customizing the command line prompt, and useful functions like `Test-Administrator`.
+This repository includes my PowerShell profile scripts, including customizing the command line prompt, and useful functions like `Test-Administrator` and `Set-PathEnvironmentVariable`.
 
 ## How To Use
 ### Option 1: Direct to your local PowerShell profile
-You can stream my `profile.ps1` directly to your local machine's PowerShell profile file. 
+You can put my `profile.ps1` directly to your local machine's PowerShell profile file. 
 Run the following script In a PowerShell console:
 ```powershell
-Invoke-WebRequest https://raw.githubusercontent.com/ligz08/PowerShell-Profile/master/profile.ps1 `
-| Select-Object -ExpandProperty Content `
-| Out-File $PROFILE.CurrentUserAllHosts
-
+Invoke-WebRequest https://raw.githubusercontent.com/ligz08/PowerShell-Profile/master/profile.ps1 | Select-Object -ExpandProperty Content | Out-File $PROFILE.CurrentUserAllHosts
 . $PROFILE.CurrentUserAllHosts
 ```
-Note that there had never been a profile script before, this may produce an error, because `$PROFILE.CurrentUserAllHosts` resolves to a path that does not exist.
+
+An equivalent but slightly less typing version of the above command:
+```powershell
+curl https://raw.githubusercontent.com/ligz08/PowerShell-Profile/master/profile.ps1 | select -exp Content > $PROFILE.CurrentUserAllHosts
+. $PROFILE.CurrentUserAllHosts
+```
+
+Note that if there had never been a profile script before, the `Out-File` step may produce an error, because `$PROFILE.CurrentUserAllHosts` resolves to a path that does not exist.
 Solve this by creating that file with `New-Item` command (like below), and then run the above `Invoke-WebRequest` script again.
 ```powershell
 New-Item $PROFILE.CurrentUserAllHosts -Force
@@ -40,8 +44,8 @@ If you run `Get-Host` you can see what host you're running PowerShell from.
 To make different hosts behave differently, you may want to specify different profile scripts for them. Run `$PROFILE.CurretUserCurrentHost` to see where PowerShell looks for profile script for your current host.
 
 ## TODOs
-- [ ] Git repository status in prompt
 - [ ] Help blocks & documentations for functions
+- [ ] Git repository status in prompt
 
 ## References & Links
 - This work is inspired by and borrows a lot of insights from [Mathias Bynens](https://mathiasbynens.be/)' dotfiles for macOS: https://github.com/mathiasbynens/dotfiles
