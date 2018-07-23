@@ -120,5 +120,5 @@ function prompt {
     Write-Host $env:COMPUTERNAME -ForegroundColor Magenta -NoNewline
     Write-Host " in " -NoNewline
     Write-Host $ExecutionContext.SessionState.Path.CurrentLocation -ForegroundColor Cyan
-    return "$('>' * ($NestedPromptLevel + 1)) "
+    return "PS $('>' * ($NestedPromptLevel + 1)) "
 }
