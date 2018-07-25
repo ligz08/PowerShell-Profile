@@ -51,13 +51,13 @@ function Get-PathEnvironmentVariable {
     #>
 
     $machine_paths = try {
-        [System.Environment]::GetEnvironmentVariable('Path', 'Machine').Split(';') | Select-Object @{name='Path';exp={$_}},@{name='Type';exp={'Machine'}}
+        [System.Environment]::GetEnvironmentVariable('Path', 'Machine').Split(';') | Select-Object @{name='Path';exp={$_}},@{name='Scope';exp={'Machine'}}
     } catch { $null }
     $user_paths = try {
-        [System.Environment]::GetEnvironmentVariable('Path', 'User').Split(';') | Select-Object @{name='Path';exp={$_}},@{name='Type';exp={'User'}}
+        [System.Environment]::GetEnvironmentVariable('Path', 'User').Split(';') | Select-Object @{name='Path';exp={$_}},@{name='Scope';exp={'User'}}
     } catch { $null }
 
-    switch ($Type) {
+    switch ($Scope) {
         'User' { return $user_paths }
         'Machine' { return $machine_paths }
         Default { return $machine_paths + $user_paths }
