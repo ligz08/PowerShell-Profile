@@ -50,9 +50,20 @@ function Get-PathEnvironmentVariable {
     This command is useful only when a path's scope (User vs. Machine) matters to you.
     #>
 
+<<<<<<< HEAD
     $machine_paths = [System.Environment]::GetEnvironmentVariable('Path', 'Machine').Split(';') | Select-Object @{name='Path';exp={$_}},@{name='Scope';exp={'Machine'}}
     $user_paths = [System.Environment]::GetEnvironmentVariable('Path', 'User').Split(';') | Select-Object @{name='Path';exp={$_}},@{name='Scope';exp={'User'}}
     switch ($Scope) {
+=======
+    $machine_paths = try {
+        [System.Environment]::GetEnvironmentVariable('Path', 'Machine').Split(';') | Select-Object @{name='Path';exp={$_}},@{name='Type';exp={'Machine'}}
+    } catch { $null }
+    $user_paths = try {
+        [System.Environment]::GetEnvironmentVariable('Path', 'User').Split(';') | Select-Object @{name='Path';exp={$_}},@{name='Type';exp={'User'}}
+    } catch { $null }
+
+    switch ($Type) {
+>>>>>>> 438e4ae2379d0ee0a28c6b27f8bf116914198c40
         'User' { return $user_paths }
         'Machine' { return $machine_paths }
         Default { return $machine_paths + $user_paths }
