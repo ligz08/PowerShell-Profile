@@ -146,10 +146,12 @@ function Add-PathEnvironmentVariable {
 # function Replace-PathEnvironmentVariable {}
 
 function prompt {
+    $Host.UI.RawUI.WindowTitle = ($PWD | Convert-Path)
     Write-Host "`n$env:USERNAME" -ForegroundColor Green -NoNewline
     if (Test-Administrator) {
         Write-Host " as " -NoNewline
         Write-Host "Administrator" -ForegroundColor Red -NoNewline
+        $Host.UI.RawUI.WindowTitle = ($PWD | Convert-Path) + " (Administrator)"
     }
     Write-Host " at " -NoNewline
     Write-Host $env:COMPUTERNAME -ForegroundColor Magenta -NoNewline
