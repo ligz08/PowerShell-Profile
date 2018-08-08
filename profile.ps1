@@ -51,10 +51,14 @@ function Get-PathEnvironmentVariable {
     #>
 
     $machine_paths = try {
-        [System.Environment]::GetEnvironmentVariable('Path', 'Machine').Split(';') | Select-Object @{name='Path';exp={$_}},@{name='Scope';exp={'Machine'}}
+        [System.Environment]::GetEnvironmentVariable('Path', 'Machine').Split(';') `
+        | Select-Object @{name='Path';exp={$_}},@{name='Scope';exp={'Machine'}} `
+        | Where-Object {$_.Path}
     } catch { $null }
     $user_paths = try {
-        [System.Environment]::GetEnvironmentVariable('Path', 'User').Split(';') | Select-Object @{name='Path';exp={$_}},@{name='Scope';exp={'User'}}
+        [System.Environment]::GetEnvironmentVariable('Path', 'User').Split(';') `
+        | Select-Object @{name='Path';exp={$_}},@{name='Scope';exp={'User'}} `
+        | Where-Object {$_.Path}
     } catch { $null }
 
     switch ($Scope) {
@@ -65,7 +69,7 @@ function Get-PathEnvironmentVariable {
 }
 
 function Reload-PathEnvironmentVariable {
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+    $env:Path = (Get-PathEnvironmentVariable | Select-Object -ExpandProperty Path) -join ';'
 }
 
 function Set-PathEnvironmentVariable {
@@ -83,10 +87,25 @@ function Set-PathEnvironmentVariable {
 
     switch ($Scope) {
         'User' {
-            [System.Environment]::SetEnvironmentVariable('PATH', $paths_str, 'User')
+            try {
+                [System.Environment]::SetEnvironmentVariable('PATH', $paths_str, 'User')
+            }
+            catch {
+                Write-Host "Failed to set PATH environment variable of scope " -NoNewline
+                Write-Host "$Scope" -ForegroundColor Yellow
+                exit 1
+            }
         }
         'Machine' {
-            [System.Environment]::SetEnvironmentVariable('PATH', $paths_str, 'Machine')
+            try {
+                [System.Environment]::SetEnvironmentVariable('PATH', $paths_str, 'Machine')
+            }
+            catch {
+                Write-Host "Failed to set PATH environment variable of scope " -NoNewline
+                Write-Host "$Scope" -NoNewline -ForegroundColor Yellow
+                Write-Host ". Do you have Administrator privilege?"
+                exit 1
+            }
         }
         Default {$env:Path = $paths_str}
     }
@@ -116,7 +135,7 @@ function Add-PathEnvironmentVariable {
             } else {
                 $user_paths = $user_paths + $Path
             }
-            Set-PathEnvironmentVariable -Path $user_paths -Scope 'User'
+            Set-PathEnvironmentVariable -Path $user_paths -Scope 'User' -ErrorAction Stop
             Reload-PathEnvironmentVariable
         }
         'Machine' {
@@ -125,7 +144,7 @@ function Add-PathEnvironmentVariable {
             } else {
                 $machine_paths = $machine_paths + $Path
             }
-            Set-PathEnvironmentVariable -Path $machine_paths -Scope 'Machine'
+            Set-PathEnvironmentVariable -Path $machine_paths -Scope 'Machine' -ErrorAction Stop
             Reload-PathEnvironmentVariable
         }
         Default {
@@ -136,13 +155,63 @@ function Add-PathEnvironmentVariable {
             }
         }
     }
-    Write-Host "The following paths are added to your $Scope PATH environment variable."
-    Write-Host "`t" -NoNewline
-    Write-Host $Path -Separator "`n`t"
+    Write-Host "Added the following paths to PATH environment variable of scope " -NoNewline
+    Write-Host "$Scope`n`t" -NoNewline -ForegroundColor Yellow
+    Write-Host $Path -Separator "`n`t" -ForegroundColor Yellow
+}
+
+function Remove-PathEnvironmentVariable {
+    <#
+    .Example
+    Remove-PathEnvironmentVariable 'C:\Program Files\SomeProgram\bin' -Scope Machine
+    Remove-PathEnvironmentVariable 'C:\Program Files\SomeProgram\bin','C:\Program Files\AnotherProgram\bin' 
+    'C:\Program Files\SomeProgram\bin','C:\Program Files\AnotherProgram\bin' | Remove-PathEnvironmentVariable -Scope User
+    #>
+    param(
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+        [string[]]$Path,
+        [ValidateSet('Process','User','Machine')]$Scope='Process',
+        [switch]$Force
+    )
+    begin {
+        $old_paths = switch ($Scope) {
+            'Process' { $env:Path -split ';' }
+            Default { Get-PathEnvironmentVariable -Scope $Scope | Select-Object -ExpandProperty Path}
+        }
+        $requested_paths = @()
+        Write-Verbose "Old paths of scope $Scope`:"
+        $old_paths | Write-Verbose
+    }
+    process {
+        $requested_paths += $Path
+    }
+    end {
+        Write-Verbose "Request to remove paths:"
+        $requested_paths | Write-Verbose
+        $notfound_paths = $requested_paths | Where-Object {$_ -notin $old_paths}
+        $toberemoved_paths = $requested_paths | Where-Object {$_ -in $old_paths}
+
+        if ($notfound_paths) {
+            Write-Host "Could not find the following path(s) in PATH environment variable of scope " -NoNewline
+            Write-Host "$Scope`n`t" -NoNewline -ForegroundColor Yellow
+            Write-Host $notfound_paths -ForegroundColor Red -Separator "`n`t"
+        }
+
+        if ($toberemoved_paths){
+            $new_paths = $old_paths | Where-Object {$_ -and ($_ -notin $requested_paths)}
+            Write-Verbose "Paths to remove:"
+            $toberemoved_paths | Write-Verbose
+            Write-Verbose "New paths of scope $Scope`:"
+            $new_paths | Write-Verbose
+            Set-PathEnvironmentVariable -Path $new_paths -Scope $Scope -ErrorAction Stop
+            Write-Host "Removed the following path(s) from PATH environment variable of scope " -NoNewline
+            Write-Host "$Scope`n`t" -NoNewline -ForegroundColor Yellow
+            Write-Host $toberemoved_paths -ForegroundColor Yellow -Separator "`n`t"
+        }
+    }
 }
 
 # TODO
-# function Remove-PathEnvironmentVariable {}
 # function Replace-PathEnvironmentVariable {}
 
 function prompt {
