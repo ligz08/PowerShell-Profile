@@ -121,8 +121,8 @@ function Add-PathEnvironmentVariable {
         [switch]$MakeShort
     )
 
-    $machine_paths = [System.Environment]::GetEnvironmentVariable('Path', 'Machine').Split(';')
-    $user_paths = [System.Environment]::GetEnvironmentVariable('Path', 'User').Split(';')
+    $machine_paths = Get-PathEnvironmentVariable -Scope Machine | Select-Object -ExpandProperty Path
+    $user_paths = Get-PathEnvironmentVariable -Scope User | Select-Object -ExpandProperty Path
 
     if ($MakeShort) {
         $Path = $Path | Get-ShortPath
