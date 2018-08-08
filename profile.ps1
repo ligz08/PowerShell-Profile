@@ -93,7 +93,7 @@ function Set-PathEnvironmentVariable {
             catch {
                 Write-Host "Failed to set PATH environment variable of scope " -NoNewline
                 Write-Host "$Scope" -ForegroundColor Yellow
-                exit 1
+                throw
             }
         }
         'Machine' {
@@ -104,7 +104,7 @@ function Set-PathEnvironmentVariable {
                 Write-Host "Failed to set PATH environment variable of scope " -NoNewline
                 Write-Host "$Scope" -NoNewline -ForegroundColor Yellow
                 Write-Host ". Do you have Administrator privilege?"
-                exit 1
+                throw
             }
         }
         Default {$env:Path = $paths_str}
@@ -203,7 +203,12 @@ function Remove-PathEnvironmentVariable {
             $toberemoved_paths | Write-Verbose
             Write-Verbose "New paths of scope $Scope`:"
             $new_paths | Write-Verbose
-            Set-PathEnvironmentVariable -Path $new_paths -Scope $Scope -ErrorAction Stop
+            try {
+                Set-PathEnvironmentVariable -Path $new_paths -Scope $Scope
+            }
+            catch {
+                return
+            }
             Write-Host "Removed the following path(s) from PATH environment variable of scope " -NoNewline
             Write-Host "$Scope`n`t" -NoNewline -ForegroundColor Yellow
             Write-Host $toberemoved_paths -ForegroundColor Yellow -Separator "`n`t"
