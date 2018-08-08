@@ -12,7 +12,7 @@ The script is only tested on Windows 10 and Windows Server 2012 R2 with PowerShe
 
 If a profile script does not already exist, (i.e. `Test-Path $PROFILE.CurrentUserAllHosts` returns `False`), create an empty profile with the following command, otherwize you may encounter errors in later steps because `$PROFILE.CurrentUserAllHosts` resolves to a path that does not exist.
 ```powershell
-New-Item $PROFILE.CurrentUserAllHosts -Force
+New-Item $PROFILE.CurrentUserAllHosts -Type File -Force
 ```
 
 ### Option 1: Direct to your local PowerShell profile
