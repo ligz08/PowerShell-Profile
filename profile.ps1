@@ -1,3 +1,7 @@
+$os = Get-WmiObject Win32_OperatingSystem
+Write-Host "Operating system: $($os.OSArchitecture) $($os.Caption) version $($os.Version)"
+Write-Host "PowerShell version: $($PSVersionTable.PSVersion)"
+
 function Test-Administrator {
     <#
     .Synopsis
