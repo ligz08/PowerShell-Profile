@@ -10,30 +10,24 @@ The script is only tested on Windows 10 and Windows Server 2012 R2 with PowerShe
 
 ## How To Use
 
-If a profile script does not already exist, (i.e. `Test-Path $PROFILE.CurrentUserAllHosts` returns `False`), create an empty profile with the following command, otherwize you may encounter errors in later steps because `$PROFILE.CurrentUserAllHosts` resolves to a path that does not exist.
-```powershell
-New-Item $PROFILE.CurrentUserAllHosts -Type File -Force
-```
-
-### Option 1: Direct to your local PowerShell profile
-You can put contents of my `profile.ps1` directly to your local machine's PowerShell profile. 
+### Option 1: Download the profile scripts directly to your local PowerShell profile location
+You can download my PowerShell-Profile scripts directly to your local machine's PowerShell profile location. 
 Run the following script In a PowerShell console:
 ```powershell
-Invoke-WebRequest https://raw.githubusercontent.com/ligz08/PowerShell-Profile/master/profile.ps1 | Select-Object -ExpandProperty Content | Out-File $PROFILE.CurrentUserAllHosts
-. $PROFILE.CurrentUserAllHosts
-```
-
-An equivalent but slightly less typing version of the above command:
-```powershell
-curl https://raw.githubusercontent.com/ligz08/PowerShell-Profile/master/profile.ps1 | select -exp Content > $PROFILE.CurrentUserAllHosts
-. $PROFILE.CurrentUserAllHosts
+$dest = $PROFILE.CurrentUserAllHosts
+if (-not (Test-Path $dest)) {New-Item $dest -Type File -Force }
+Split-Path $dest | Push-Location
+Start-BitsTransfer https://raw.githubusercontent.com/ligz08/PowerShell-Profile/master/psfunctions.ps1
+Start-BitsTransfer https://raw.githubusercontent.com/ligz08/PowerShell-Profile/master/profile.ps1
+Pop-Location
+. $dest
 ```
 
 ### Option 2: Clone/download repository to local machine
 Or, fork, clone or download this repository if you want more tweaking and customization.
-When on a local machine, copy the `profile.ps1` file to your PowerShell profile. For example:
+When on a local machine, copy all `.ps1` files to your PowerShell profile directory. For example:
 ```powershell
-Copy-Item .\profile.ps1 $PROFILE.CurrentUserAllHosts
+Copy-Item .\*.ps1 (Split-Path $PROFILE.CurrentUserAllHosts)
 ```
 
 ## More Explanations
