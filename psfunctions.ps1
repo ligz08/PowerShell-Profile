@@ -123,8 +123,8 @@ function Add-PathEnvironmentVariable {
         [switch]$Quiet
     )
 
-    $machine_paths = Get-PathEnvironmentVariable -Scope Machine | Select-Object -ExpandProperty Path
-    $user_paths = Get-PathEnvironmentVariable -Scope User | Select-Object -ExpandProperty Path
+    $machine_paths = @(Get-PathEnvironmentVariable -Scope Machine | Select-Object -ExpandProperty Path)
+    $user_paths = @(Get-PathEnvironmentVariable -Scope User | Select-Object -ExpandProperty Path)
 
     if ($MakeShort) {
         $Path = $Path | Get-ShortPath
