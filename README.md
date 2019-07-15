@@ -17,8 +17,9 @@ Run the following script In a PowerShell console:
 $dest = $PROFILE.CurrentUserAllHosts
 if (-not (Test-Path $dest)) {New-Item $dest -Type File -Force }
 Split-Path $dest | Push-Location
-Start-BitsTransfer https://raw.githubusercontent.com/ligz08/PowerShell-Profile/master/psfunctions.ps1
 Start-BitsTransfer https://raw.githubusercontent.com/ligz08/PowerShell-Profile/master/profile.ps1
+Start-BitsTransfer https://raw.githubusercontent.com/ligz08/PowerShell-Profile/master/psfunctions.ps1
+Start-BitsTransfer https://raw.githubusercontent.com/ligz08/PowerShell-Profile/master/psaliases.ps1
 Pop-Location
 . $dest
 ```

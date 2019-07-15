@@ -4,7 +4,7 @@ Write-Host "PowerShell version: $($PSVersionTable.PSVersion)"
 
 Push-Location $PSScriptRoot
 
-. .\psfunctions.ps1
+Get-ChildItem ps*.ps1 | ForEach-Object {. $_.FullName}
 
 function prompt {
     $Host.UI.RawUI.WindowTitle = ($PWD | Convert-Path)
