@@ -7,7 +7,7 @@ Push-Location $PSScriptRoot
 Get-ChildItem ps*.ps1 | ForEach-Object {. $_.FullName}
 
 function prompt {
-    $Host.UI.RawUI.WindowTitle = ($PWD | Convert-Path)
+    $Host.UI.RawUI.WindowTitle = ($PWD | Convert-Path | Split-Path -Leaf)
     Write-Host "`n$env:USERNAME" -ForegroundColor Green -NoNewline
     if (Test-Administrator) {
         Write-Host " as " -NoNewline

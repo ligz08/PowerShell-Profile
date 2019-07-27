@@ -2,7 +2,7 @@
 function Test-Administrator {
     <#
     .Synopsis
-    Return True if you are currently running as an administrator, False otherwise.
+    Return True if you are currently running PowerShell as an administrator, False otherwise.
     #>
     $user = [Security.Principal.WindowsIdentity]::GetCurrent()
     (New-Object Security.Principal.WindowsPrincipal $user).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
