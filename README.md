@@ -4,7 +4,7 @@
 ## What Is This
 A [PowerShell profile](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles) is a script that runs every time you start a PowerShell session, such as a PowerShell console, or an integrated scripting environment (ISE). It is PowerShell's equivalent to `.bash_profile` and `.bashrc` files of the Bash shell. It's a place where you can customize your shell environment and pre-load frequently used functions/commands/variables.
 
-This repository includes my PowerShell profile scripts, including customizing the command line prompt, and useful functions like `Test-Administrator` and `Set-PathEnvironmentVariable`.
+This repository contains my PowerShell profile scripts, including customizing the command line prompt, and useful functions like `Test-Administrator` and `Set-PathEnvironmentVariable`.
 
 The script is only tested on Windows 10 and Windows Server 2012 R2 with PowerShell 5.1. Please use caution when using it on other versions of Windows and PowerShell. Please do not use it on other operating systems.
 
