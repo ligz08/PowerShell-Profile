@@ -1,5 +1,5 @@
-$os = Get-WmiObject Win32_OperatingSystem
-Write-Host "Operating system: $($os.OSArchitecture) $($os.Caption) version $($os.Version)"
+$computerInfo = Get-ComputerInfo
+Write-Host "Operating system: $($computerInfo.OsArchitecture) $($computerInfo.OsName) version $($computerInfo.OsVersion)"
 Write-Host "PowerShell version: $($PSVersionTable.PSVersion)"
 
 Push-Location $PSScriptRoot
