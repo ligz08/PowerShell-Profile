@@ -18,8 +18,13 @@ function prompt {
     Write-Host " at " -NoNewline
     Write-Host $env:COMPUTERNAME -ForegroundColor Magenta -NoNewline
     Write-Host " in " -NoNewline
-    Write-Host $ExecutionContext.SessionState.Path.CurrentLocation -ForegroundColor Cyan
-    return "PS $('>' * ($NestedPromptLevel + 1)) "
+    Write-Host $ExecutionContext.SessionState.Path.CurrentLocation -ForegroundColor Cyan -NoNewline
+    $branch = try { git rev-parse --abbrev-ref HEAD 2>$null} catch {$null}
+    if ($branch){
+        Write-Host " on " -NoNewline
+        Write-Host $branch -ForegroundColor Yellow -NoNewline
+    }
+    return "`nPS $('>' * ($NestedPromptLevel + 1)) "
 }
 
 Pop-Location
