@@ -1,4 +1,7 @@
+$tmp = $ProgressPreference
+$ProgressPreference = "SilentlyContinue"
 $computerInfo = Get-ComputerInfo
+$ProgressPreference = $tmp
 Write-Host "Operating system: $($computerInfo.OsArchitecture) $($computerInfo.OsName) version $($computerInfo.OsVersion)"
 Write-Host "PowerShell version: $($PSVersionTable.PSVersion)"
 
